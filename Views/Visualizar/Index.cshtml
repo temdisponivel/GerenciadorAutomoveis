@@ -109,10 +109,10 @@
 </div>
 <script>
     var automovel = @Html.Raw(Json.Encode(ViewBag.Automovel));
+    var opcionaisInicial = @Html.Raw(Json.Encode(ViewBag.Automovel.opcionais));
     var marcas = @Html.Raw(Json.Encode(ViewBag.Marcas));
     var opcionais = @Html.Raw(Json.Encode(ViewBag.Opcionais));
-    var bkpOpcionais = [];
-    var novosOpcionais = [];
+    var todosOpcionais = @Html.Raw(Json.Encode(ViewBag.Opcionais));
 
     $(document).ready(function () {
         criaModelView();
@@ -155,11 +155,8 @@
     }
 
     function cancelarAlteracao() {
-        automovel.opcionais = automovel.opcionais.concat(bkpOpcionais);
-        automovel.opcionais = arrayDiffer(automovel.opcionais, novosOpcionais);
-        opcionais = opcionais.concat(novosOpcionais);
-        bkpOpcionais = [];
-        novosOpcionais = [];
+        automovel.opcionais = opcionaisInicial.slice();
+        opcionais = arrayDiffer(todosOpcionais, automovel.opcionais);
         fecharDialogEditar();
     }
 
@@ -172,7 +169,7 @@
     function removerOpcional(id) {
         for (var i = 0; i < automovel.opcionais.length; i++) {
             if (automovel.opcionais[i].id == id) {
-                bkpOpcionais.push(automovel.opcionais.splice(i, 1)[0]);
+                automovel.opcionais.splice(i, 1)[0];
                 atualizaOpcionais();
             }
         }
@@ -184,9 +181,7 @@
             return;
         }
 
-        var adc = {id: $("#opcionais").val(), descricao: $("#opcionais option:selected").text()};
-        automovel.opcionais.push(adc);
-        novosOpcionais.push(adc);
+        automovel.opcionais.push({id: $("#opcionais").val(), descricao: $("#opcionais option:selected").text()});
         atualizaOpcionais();
         fecharDialogOpcionais();
     }
@@ -200,9 +195,14 @@
     }
 
     function atualizaOpcionais() {
-        opcionais = arrayDiffer(opcionais, automovel.opcionais);
+        opcionais = arrayDiffer(todosOpcionais, automovel.opcionais);
         opcionaisObserver(opcionais);
         automovelObserver(automovel);
+
+        if (opcionais.length == 0)
+            $("#btnOpcional").prop('disabled', true);
+        else
+            $("#btnOpcional").prop('disabled', false);
     }
 
     function criaModelView() {

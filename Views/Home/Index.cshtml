@@ -18,19 +18,21 @@
     <h4><strong>Automóveis</strong></h4>
     <table id="automovel" class="table table-bordered">
         <thead>
-            <th class='text-center'>Modelo</th>
-            <th class='text-center'>Marca</th>
-            <th class='text-center'>Ano</th>
-            <th class='text-center'>Detalhes</th>
-            <th class='text-center'>Excluir</th>
+            <tr>
+                <th class='text-center'>Modelo</th>
+                <th class='text-center'>Marca</th>
+                <th class='text-center'>Ano</th>
+                <th class='text-center'>Detalhes</th>
+                <th class='text-center'>Excluir</th>
+            </tr>
         </thead>
         <tbody data-bind="value: automovelObserver, foreach: automoveis">
             <tr> 
                 <td class="text-center" data-bind="text: modelo"></td>
                 <td class="text-center" data-bind="text: marca.nome"></td>
                 <td class="text-center" data-bind="text: ano"></td>
-                <td class="text-center"><button class="btn btn-info" data-bind="click: function() { detalhes($data.id) }">Editar</button></td>
-                <td class="text-center"><button class="btn btn-danger" data-bind="click: function() { excluir($data.id) }">Excluir</button></td>
+                <td class="text-center"><button class="btn btn-info" data-bind="click: function() { detalhes(id) }">Editar</button></td>
+                <td class="text-center"><button class="btn btn-danger" data-bind="click: function() { excluir(id) }">Excluir</button></td>
             </tr>
 
         </tbody>
@@ -104,6 +106,8 @@
                 url: "api/automovel/" + id,
                 type: "DELETE",
                 success: function (data) {
+                    excluiAutomovel(id);
+                    automovelObserver(automoveis);
                     alert("Excluído com sucesso!");
                 },
                 error: function (data) {
@@ -119,4 +123,12 @@
         }
         ko.applyBindings(automoveisViewModel());
     }
+
+    function excluiAutomovel(id) {
+        for (var i = 0; i < automoveis.length; i++) {
+            if (automoveis[i].id == id)
+                automoveis.splice(i, 1);
+        }
+    }
+
 </script>

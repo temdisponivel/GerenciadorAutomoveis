@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Configuration;
 using System.Data;
 using System.Data.SqlClient;
 using System.Linq;
@@ -13,7 +14,7 @@ namespace GerenciadorAutomoveis.Models
     /// </summary>
     public class AutomoveisRepositorio : IAutomoveisRepositorio
     {
-        private string connectionString = @"server=localhost;database=GerenciadorAutomóveis;uid=matheus;password=075283";//WebConfigurationManager.ConnectionStrings["connectionString"].ConnectionString;
+        private string connectionString = ConfigurationManager.ConnectionStrings["GerenciadorAutomoveis"].ConnectionString;
 
         public List<Automovel> GetTodos()
         {

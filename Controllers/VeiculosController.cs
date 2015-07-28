@@ -18,9 +18,12 @@ namespace GerenciadorAutomoveis.Controllers
         public IEnumerable<Automovel> Get()
         {
             List<Automovel> automoveis = repositorio.GetTodos();
-            
+
             if (automoveis == null)
+            {
                 throw new HttpResponseException(new HttpResponseMessage(HttpStatusCode.InternalServerError));
+                yield break;
+            }
 
             foreach (Automovel auto in automoveis)
                 yield return auto;
