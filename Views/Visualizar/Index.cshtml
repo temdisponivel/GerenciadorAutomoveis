@@ -1,0 +1,243 @@
+﻿<section class="container">
+    <div class="text-center" style="margin-bottom: 25px;">
+        <h1>Detalhes Automóvel</h1>
+    </div>
+    <section id="detalhes">
+        <div class="pull-left col-md-2 text-center">
+            <strong>Modelo</strong>
+            <p data-bind="value: automovelObserver, text: automovel.modelo"></p>
+        </div>
+        <div class="pull-left col-md-2 text-center">
+            <strong>Marca</strong>
+            <p data-bind="value: automovelObserver, text: automovel.marca.nome"></p>
+        </div>
+        <div class="pull-left col-md-2 text-center">
+            <strong>Ano</strong>
+            <p data-bind="value: automovelObserver, text: automovel.ano"></p>
+        </div>
+        <div class="pull-left col-md-2 text-center">
+            <strong>Valor</strong>
+            <p data-bind="value: automovelObserver, text: 'R$ ' + automovel.preco.toString().replace(/(\d)(?=(\d\d\d)+(?!\d))/g, '$1,')"></p>
+        </div>
+
+        <div class="pull-left col-md-3 text-left">
+            <strong>Opcionais</strong>
+            <div data-bind="value: automovelObserver, if: automovel.opcionais.length == 0">
+                <p>Não há opcionais.</p>
+            </div>
+            <p data-bind="value: automovelObserver, foreach: automovel.opcionais">
+                <span data-bind="text: $data.descricao"></span></br>
+            </p>
+        </div>
+    </section>
+
+    <section id="controles" style="clear: both; margin-top:35px; float: right;" class="col-md-3">
+        <div class="btn-group">
+            <button id="btnEditar" class="btn btn-info">Editar</button>      
+            <button id="btnVoltar" class="btn btn-warning ">Voltar</button>
+        </div>
+    </section>
+</section>
+<div id="editar" title="Editar">
+    <div class="row">
+        <div class="pull-left col-md-3">
+            <strong>Modelo</strong>
+            <input type="text" id="txtModeloEditar" data-bind="value: automovelObserver, value: automovel.modelo"/>
+        </div>
+        <div class="pull-left col-md-3">
+            <strong>Marca</strong>
+            <p>
+                <select id="selectMarcaEditar" data-bind="options: marcas,
+                           optionsText: 'nome',
+                           optionsValue: 'id',
+                           value: marcasObserver">
+                </select>
+            </p>
+        </div>
+        <div class="pull-left col-md-3">
+            <strong>Ano</strong>
+            <p>
+                <select id="selectAnoEditar" data-bind="options: anos,
+                           optionsText: 'ano',
+                           optionsValue: 'ano',
+                           value: anosObserver">
+                </select>
+            </p>
+        </div>
+        <div class="pull-left col-md-3">
+            <strong>Valor</strong>
+            <input id="txtPrecoEditar" type="number" data-bind="value: automovelObserver, value: automovel.preco"/>
+        </div>
+    </div>
+    
+    <div style="clear: both; display: block; margin-top: 25px;">
+        <strong>Opcionais</strong>
+        <button id="btnOpcional" class="btn btn-info" onclick="opcionaisClick()">+</button>
+        <table id="table-opcionais" class="table table-bordered text-center" style="margin-top:15px;">
+            <thead>
+                <tr>
+                    <th class="text-center">Descrição</th>
+                    <th class="text-center">Excluir</th>
+                </tr>
+            </thead>
+            <tbody data-bind="value: automovelObserver, foreach: automovel.opcionais">
+            <tr> 
+                <td class="text-center" data-bind="text: $data.descricao"></td>
+                <td class="text-center"><button class="btn btn-danger" data-bind="click: function() { removerOpcional($data.id) }">Excluir</button></td>
+            </tr>
+        </tbody>
+        </table>
+    </div>
+    <div class="btn-group text-right" style="float: right;">
+        <button id="btnSalvar" class="btn btn-success" onclick="salvarAlteracao()">Salvar</button>
+        <button id="btnCancelar" class="btn btn-warning" onclick="cancelarAlteracao()">Cancelar</button>
+    </div>
+</div>
+<div id="addOpcional" title="Adicionar Opcionais">
+    <div class="row">
+        Selecione o opcional para adicionar:
+        <select id="opcionais" style="float: right;" data-bind="options: opcionais,
+                           optionsCapition: 'Opcionais...',
+                           optionsText: 'descricao',
+                           optionsValue: 'id',
+                           value: opcionaisObserver"></select>
+    </div>
+    <div class="btn-group row" style="margin-top: 25px; float: right;">
+        <button id="btnAddOpcional" class="btn btn-success" onclick="adicionarOpcional()">Adicionar</button>
+        <button id="btnCancelarOpcional" class="btn btn-danger" onclick="fecharDialogOpcionais()">Cancelar</button>
+    </div>
+</div>
+<script>
+    var automovel = @Html.Raw(Json.Encode(ViewBag.Automovel));
+    var marcas = @Html.Raw(Json.Encode(ViewBag.Marcas));
+    var opcionais = @Html.Raw(Json.Encode(ViewBag.Opcionais));
+    var bkpOpcionais = [];
+    var novosOpcionais = [];
+
+    $(document).ready(function () {
+        criaModelView();
+    });
+
+    $("#editar").dialog({ autoOpen: false, minWidth: 700, });
+    $("#addOpcional").dialog({ autoOpen: false, minWidth: 500, });
+
+    $("#btnVoltar").click(function () {
+        document.location = "/";
+    });
+
+    $("#btnEditar").click(function () { 
+        $("#editar").dialog("open"); 
+    });
+
+    function salvarAlteracao() {
+        if (!confirm("Deseja salvar as alterações?"))
+            return;
+
+        automovel.modelo = $("#txtModeloEditar").val();
+        automovel.marca.id = $("#selectMarcaEditar").val();
+        automovel.marca.nome = $("#selectMarcaEditar option:selected").text();
+        automovel.ano = $("#selectAnoEditar").val();
+        automovel.preco = $("#txtPrecoEditar").val();
+
+        $.ajax({
+            url: "api/automovel",
+            type: "PUT",
+            data: automovel,
+            success: function (data) {
+                alert("Automóvel alterado com sucesso!");
+            },
+            error: function (data) {
+                alert("Ocorreu um erro ao alterar o automóvel. Tente novamente mais tarde.");
+            }
+        });
+
+        fecharDialogEditar();
+    }
+
+    function cancelarAlteracao() {
+        automovel.opcionais = automovel.opcionais.concat(bkpOpcionais);
+        automovel.opcionais = arrayDiffer(automovel.opcionais, novosOpcionais);
+        opcionais = opcionais.concat(novosOpcionais);
+        bkpOpcionais = [];
+        novosOpcionais = [];
+        fecharDialogEditar();
+    }
+
+    function fecharDialogEditar() {
+        automovelObserver(automovel);
+        opcionaisObserver(opcionais);
+        $("#editar").dialog("close");
+    }
+
+    function removerOpcional(id) {
+        for (var i = 0; i < automovel.opcionais.length; i++) {
+            if (automovel.opcionais[i].id == id) {
+                bkpOpcionais.push(automovel.opcionais.splice(i, 1)[0]);
+                atualizaOpcionais();
+            }
+        }
+    }
+
+    function adicionarOpcional() {
+        if ($("#opcionais").val() == undefined) {
+            fecharDialogOpcionais();
+            return;
+        }
+
+        var adc = {id: $("#opcionais").val(), descricao: $("#opcionais option:selected").text()};
+        automovel.opcionais.push(adc);
+        novosOpcionais.push(adc);
+        atualizaOpcionais();
+        fecharDialogOpcionais();
+    }
+
+    function opcionaisClick() {
+        $("#addOpcional").dialog("open");
+    }
+
+    function fecharDialogOpcionais() {
+        $("#addOpcional").dialog("close");
+    }
+
+    function atualizaOpcionais() {
+        opcionais = arrayDiffer(opcionais, automovel.opcionais);
+        opcionaisObserver(opcionais);
+        automovelObserver(automovel);
+    }
+
+    function criaModelView() {
+        function opcionaisModelView() {
+            opcionais = arrayDiffer(opcionais, automovel.opcionais);
+
+            anos = [];
+            for (var i = 1900; i <= @DateTime.Now.Year+1; i++)
+                anos.push({ano: i});
+
+            opcionaisObserver = ko.observable(opcionais);
+            marcasObserver = ko.observable(automovel.marca.id);
+            anosObserver = ko.observable(automovel.ano);
+            automovelObserver = ko.observable(automovel);
+        }
+        ko.applyBindings(new opcionaisModelView());
+    }
+
+    function arrayDiffer(arrayA, arrayB)
+    {
+        var hash = [];
+
+        arrayB.forEach(function(obj){
+            hash[obj.id] = obj;
+        });
+
+        return arrayA.filter(function(obj){
+            return !(obj.id in hash);
+        });
+    }
+
+</script>
+
+<style>
+    input {
+        width: 125px;
+    }
+</style>
