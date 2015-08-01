@@ -1,0 +1,26 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 2012
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Api", "Api\Api.csproj", "{663F8EDC-F2E9-4EC2-8492-478AE63BF165}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GerenciadorWeb", "GerenciadorWeb\GerenciadorWeb.csproj", "{5AC9400F-57B0-45EC-9C05-F2DAF9C719D9}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{663F8EDC-F2E9-4EC2-8492-478AE63BF165}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{663F8EDC-F2E9-4EC2-8492-478AE63BF165}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{663F8EDC-F2E9-4EC2-8492-478AE63BF165}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{663F8EDC-F2E9-4EC2-8492-478AE63BF165}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5AC9400F-57B0-45EC-9C05-F2DAF9C719D9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5AC9400F-57B0-45EC-9C05-F2DAF9C719D9}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5AC9400F-57B0-45EC-9C05-F2DAF9C719D9}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5AC9400F-57B0-45EC-9C05-F2DAF9C719D9}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal
